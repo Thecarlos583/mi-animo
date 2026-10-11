@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="es-VE">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Mi Ánimo</title>
+  <meta name="description" content="Un espacio tranquilo para marcar cómo estás y hacer una cosa pequeña.">
+  <meta name="theme-color" content="#F6F3EE" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#14181D" media="(prefers-color-scheme: dark)">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Mi Ánimo">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="app">
+    <header class="cabeza">
+      <p class="fecha" id="fecha"></p>
+      <h1 id="saludo">Hola</h1>
+    </header>
+
+    <!-- Solo aparece en modo día difícil -->
+    <section class="tarjeta dificil-tarjeta solo-dificil" aria-live="polite">
+      <h2>Hoy es un día difícil. Está bien.</h2>
+      <p>Hoy no tienes que hacer nada más. Con estar aquí ya es suficiente.</p>
+      <p class="recuerdo" id="recuerdo" hidden></p>
+      <div class="fila-botones">
+        <button class="boton suave" data-abrir="apoyo">Ver mi plan de apoyo</button>
+        <button class="boton texto" id="salirDificil">Ya me siento un poquito mejor</button>
+      </div>
+    </section>
+
+    <!-- 1. Ánimo: lo único importante -->
+    <section class="tarjeta" id="tarjetaAnimo">
+      <h2>¿Cómo te sientes ahorita?</h2>
+      <div class="caras" id="caras" role="radiogroup" aria-label="Tu ánimo de 1 a 5"></div>
+      <p class="respuesta" id="respuestaAnimo" aria-live="polite"></p>
+      <button class="enlace" id="sugerirDificil" hidden>¿Activar el modo día difícil?</button>
+
+      <details class="opcional" id="detallesHoy">
+        <summary>Agregar algo más <span>(opcional)</span></summary>
+        <p class="pista">Si quieres, marca lo que pasó hoy. Sirve para ver patrones más adelante.</p>
+        <div class="chips" id="chips"></div>
+        <label class="campo">
+          <span>Algo que estuvo bien hoy</span>
+          <span class="fila-campo">
+            <input type="text" id="nuevaCosaBuena" maxlength="140" placeholder="Por pequeño que sea" autocomplete="off">
+            <button class="boton suave chico" id="guardarCosaBuena">Guardar</button>
+          </span>
+        </label>
+        <ul class="lista-buenas" id="buenasHoy"></ul>
+      </details>
+    </section>
+
+    <!-- 2. Una cosa ahora: el corazón -->
+    <section class="tarjeta una-cosa" id="unaCosa">
+      <p class="etiqueta">Una cosa ahora</p>
+      <p class="sugerencia" id="sugerencia" aria-live="polite"></p>
+      <p class="amable" id="amable" hidden></p>
+      <div class="fila-botones" id="botonesCosa">
+        <button class="boton principal" id="laHice">La hice</button>
+        <button class="boton suave" id="masFacil">Otra más fácil</button>
+      </div>
+      <div class="celebra" id="celebra" hidden aria-live="polite">
+        <div class="ondas" aria-hidden="true"><span></span><span></span><span></span></div>
+        <p class="celebra-texto" id="celebraTexto">Bien hecho. Eso cuenta.</p>
+        <button class="boton texto" id="otraCosa">Otra cosa pequeña</button>
+      </div>
+    </section>
+
+    <!-- 3. Modo 10 minutos -->
+    <section class="tarjeta oculto-dificil">
+      <button class="diez" id="abrirDiez">
+        <span class="diez-icono" aria-hidden="true">10</span>
+        <span><strong>Modo 10 minutos</strong><small>Para empezar algo difícil. Solo 10, y si quieres paras.</small></span>
+      </button>
+    </section>
+
+    <button class="boton dificil-boton oculto-dificil" id="entrarDificil">Hoy es un día difícil</button>
+
+    <!-- Lo demás, escondido -->
+    <section class="mas">
+      <details class="seccion oculto-dificil" id="seccionBuenas">
+        <summary>Cosas que estuvieron bien</summary>
+        <div class="seccion-cuerpo">
+          <p class="pista">Lo que fuiste guardando. Para leer en un día gris.</p>
+          <ul class="lista-buenas" id="buenasTodas"></ul>
+        </div>
+      </details>
+
+      <details class="seccion oculto-dificil" id="seccionPatrones">
+        <summary>Patrones</summary>
+        <div class="seccion-cuerpo">
+          <div class="mes-nav">
+            <button class="boton texto chico" id="mesAnterior" aria-label="Mes anterior">‹</button>
+            <strong id="mesTitulo"></strong>
+            <button class="boton texto chico" id="mesSiguiente" aria-label="Mes siguiente">›</button>
+          </div>
+          <div class="calendario" id="calendario"></div>
+          <div class="leyenda" id="leyenda"></div>
+          <p class="detalle-dia" id="detalleDia" aria-live="polite"></p>
+          <h3>Comparaciones</h3>
+          <div id="comparaciones"></div>
+        </div>
+      </details>
+
+      <details class="seccion" id="seccionApoyo">
+        <summary>Plan de apoyo</summary>
+        <div class="seccion-cuerpo">
+          <h3>Cuando esté mal, puedo:</h3>
+          <ul class="plan">
+            <li>Escribirle a alguien de confianza, aunque sea un "hoy no estoy bien".</li>
+            <li>Tomar agua y comer algo pequeño.</li>
+            <li>Darme una ducha o lavarme la cara.</li>
+            <li>Salir un ratico a la puerta o al balcón.</li>
+            <li>Recordar que este momento no es para siempre.</li>
+          </ul>
+
+          <h3>Mis personas de confianza</h3>
+          <ul class="contactos" id="contactos"></ul>
+          <details class="opcional">
+            <summary>Agregar a alguien</summary>
+            <form class="form-contacto" id="formContacto">
+              <label class="campo"><span>Nombre</span><input type="text" id="contactoNombre" maxlength="40" required autocomplete="off"></label>
+              <label class="campo"><span>Número de WhatsApp</span><input type="tel" id="contactoTel" maxlength="20" placeholder="0414 123 4567" required autocomplete="off"></label>
+              <button class="boton suave" type="submit">Guardar</button>
+            </form>
+          </details>
+
+          <div class="urgencia">
+            <p>Si sientes que estás en peligro o piensas en hacerte daño, llama ya a emergencias o pídele a alguien que esté contigo.</p>
+            <a class="boton suave" href="tel:911">Llamar al 911</a>
+          </div>
+        </div>
+      </details>
+
+      <details class="seccion oculto-dificil" id="seccionAjustes">
+        <summary>Ajustes</summary>
+        <div class="seccion-cuerpo">
+          <h3>Recordatorio diario</h3>
+          <label class="interruptor">
+            <input type="checkbox" id="recordatorioActivo">
+            <span>Recordarme marcar el ánimo</span>
+          </label>
+          <label class="campo en-linea" id="campoHora" hidden>
+            <span>A esta hora</span>
+            <input type="time" id="recordatorioHora" value="20:00">
+          </label>
+          <p class="pista" id="recordatorioNota" hidden></p>
+
+          <h3>Apariencia</h3>
+          <div class="segmentos" id="tema" role="radiogroup" aria-label="Tema">
+            <button data-tema="auto">Automático</button>
+            <button data-tema="claro">Claro</button>
+            <button data-tema="oscuro">Oscuro</button>
+          </div>
+
+          <h3>Respaldo</h3>
+          <p class="pista">Tus datos viven solo en este teléfono. Nada se envía a ningún lado. Descarga un respaldo de vez en cuando.</p>
+          <div class="fila-botones">
+            <button class="boton suave" id="descargar">Descargar mis datos</button>
+            <label class="boton suave">
+              Restaurar desde archivo
+              <input type="file" id="restaurar" accept="application/json,.json" hidden>
+            </label>
+          </div>
+          <p class="pista" id="respaldoMensaje" aria-live="polite"></p>
+        </div>
+      </details>
+    </section>
+
+    <p class="pie">Tus datos se quedan en este teléfono.</p>
+  </main>
+
+  <!-- Temporizador de 10 minutos -->
+  <div class="diez-pantalla" id="diezPantalla" hidden role="dialog" aria-modal="true" aria-labelledby="diezTitulo">
+    <div class="diez-contenido">
+      <div id="diezCorriendo">
+        <p class="etiqueta" id="diezTitulo">Solo 10 minutos</p>
+        <div class="anillo">
+          <svg viewBox="0 0 200 200" aria-hidden="true">
+            <circle class="anillo-fondo" cx="100" cy="100" r="88"/>
+            <circle class="anillo-avance" id="anilloAvance" cx="100" cy="100" r="88"/>
+          </svg>
+          <p class="reloj" id="reloj" role="timer">10:00</p>
+        </div>
+        <p class="pista centrada">Si quieres parar antes, también está bien.</p>
+        <div class="fila-botones centrada">
+          <button class="boton suave" id="diezPausa">Pausar</button>
+          <button class="boton texto" id="diezCerrar">Terminar</button>
+        </div>
+      </div>
+      <div id="diezFin" hidden>
+        <p class="etiqueta">Pasaron 10 minutos</p>
+        <h2>¿Quieres seguir o parar?</h2>
+        <p class="pista centrada">Las dos respuestas están bien.</p>
+        <div class="fila-botones centrada">
+          <button class="boton principal" id="diezSeguir">Seguir 10 más</button>
+          <button class="boton suave" id="diezParar">Parar aquí</button>
+        </div>
+      </div>
+      <div id="diezAdios" hidden>
+        <h2 id="diezAdiosTexto">Empezaste, y eso era lo difícil.</h2>
+        <div class="fila-botones centrada">
+          <button class="boton principal" id="diezListo">Listo</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
