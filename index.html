@@ -5,211 +5,725 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Mi Ánimo</title>
   <meta name="description" content="Un espacio tranquilo para marcar cómo estás y hacer una cosa pequeña.">
-  <meta name="theme-color" content="#F6F3EE" media="(prefers-color-scheme: light)">
-  <meta name="theme-color" content="#14181D" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#EEF2F1" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#121A1A" media="(prefers-color-scheme: dark)">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Mi Ánimo">
   <link rel="manifest" href="manifest.json">
   <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
-  <link rel="stylesheet" href="styles.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Figtree:wght@400;500;600&display=swap">
+<style>
+:root{color-scheme:light}
+html,body{margin:0}
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+[hidden]{display:none!important}
+img{max-width:100%}
+</style>
+<style>
+/* Layout: una columna estrecha tipo app, navegación fija abajo; el progreso es una planta que solo crece */
+:root{
+  --bg:#EEF2F1; --surface:#FFFFFF; --soft:#E2E9E7; --line:#CBD6D3;
+  --fg:#1E2B2A; --muted:#5E6F6C; --accent:#2F6F67; --accent-fg:#FFFFFF;
+  --sun:#D9953A; --warn-bg:#FBEFD9; --warn-fg:#6B4511; --pot:#B9785A;
+  --m1:#8A97B8; --m2:#9DB3B7; --m3:#B9C9A8; --m4:#8FBF8A; --m5:#4E9E6E;
+  --display:"Bricolage Grotesque","Trebuchet MS",system-ui,sans-serif;
+  --body:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --r:14px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#121A1A; --surface:#1B2525; --soft:#223030; --line:#2F3F3E;
+  --fg:#E4ECEA; --muted:#93A5A2; --accent:#6FB9AE; --accent-fg:#0E1717;
+  --sun:#E8AE5C; --warn-bg:#3A2E1A; --warn-fg:#F2D29E; --pot:#A06A50;
+  --m1:#56607E; --m2:#55717A; --m3:#6E8560; --m4:#5E9B60; --m5:#7BC795;
+  color-scheme:dark;}}
+:root[data-theme="dark"]{
+  --bg:#121A1A; --surface:#1B2525; --soft:#223030; --line:#2F3F3E;
+  --fg:#E4ECEA; --muted:#93A5A2; --accent:#6FB9AE; --accent-fg:#0E1717;
+  --sun:#E8AE5C; --warn-bg:#3A2E1A; --warn-fg:#F2D29E; --pot:#A06A50;
+  --m1:#56607E; --m2:#55717A; --m3:#6E8560; --m4:#5E9B60; --m5:#7BC795;
+  color-scheme:dark;}
+*{box-sizing:border-box}
+html,body{background:var(--bg);color:var(--fg)}
+body{font-family:var(--body);font-size:16px;line-height:1.5;padding-inline:16px;padding-block:0 96px}
+.wrap{max-width:520px;margin:0 auto;display:flex;flex-direction:column;gap:20px;padding-top:20px}
+.view{display:flex;flex-direction:column;gap:20px}
+h1,h2,h3{font-family:var(--display);margin:0;text-wrap:balance;letter-spacing:-.01em}
+h1{font-size:1.75rem;font-weight:700}
+h2{font-size:1.2rem;font-weight:700}
+h3{font-size:.8rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-family:var(--body)}
+p{margin:0}
+.muted{color:var(--muted)} .small{font-size:.875rem}
+.big{font-family:var(--display);font-size:1.45rem;font-weight:600;line-height:1.25}
+header.top{display:flex;justify-content:space-between;align-items:flex-end;gap:12px}
+header.top > div{min-width:0}
+.daynav{display:flex;gap:6px;flex:none}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible,summary:focus-visible,a:focus-visible{outline:3px solid var(--sun);outline-offset:2px}
+.iconbtn{background:var(--soft);border:0;border-radius:999px;width:40px;height:40px;font-size:1.1rem}
+.iconbtn:disabled{opacity:.35;cursor:default}
+.card{background:var(--surface);border-radius:var(--r);padding:18px;display:flex;flex-direction:column;gap:14px}
+details.card summary{cursor:pointer;font-weight:600}
+.scale{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.scale button{border:2px solid transparent;background:var(--soft);border-radius:12px;padding:10px 2px;display:flex;flex-direction:column;align-items:center;gap:4px;min-height:72px}
+.scale .num{font-family:var(--display);font-size:1.4rem;font-weight:700;line-height:1}
+.scale .lbl{font-size:.7rem;color:var(--muted);text-align:center;line-height:1.15}
+.scale button[aria-pressed="true"]{border-color:var(--accent);background:var(--surface)}
+.dot{width:14px;height:14px;border-radius:50%}
+.seg{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.seg button{border:2px solid transparent;background:var(--soft);border-radius:12px;padding:10px 4px;font-weight:600;font-size:.9rem}
+.seg button[aria-pressed="true"]{border-color:var(--accent);background:var(--surface)}
+label.f{display:flex;flex-direction:column;gap:6px;font-size:.9rem;font-weight:500}
+input[type=text],input[type=number],input[type=tel],textarea,select{font:inherit;color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 12px;width:100%}
+textarea{resize:vertical;min-height:72px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.row > *{min-width:0}
+.btn{border:0;border-radius:999px;padding:11px 18px;font-weight:600;background:var(--accent);color:var(--accent-fg);text-decoration:none;display:inline-block}
+.btn.ghost{background:var(--soft);color:var(--fg)}
+.btn.small{padding:7px 12px;font-size:.85rem}
+.saved{font-size:.85rem;color:var(--accent);min-height:1.2em}
+.acts{display:flex;flex-direction:column;gap:18px}
+.group{display:flex;flex-direction:column;gap:8px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:8px 14px;font-size:.92rem;display:inline-flex;align-items:center;gap:6px}
+.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-fg)}
+.chip .x{opacity:.6;font-size:.85rem}
+.banner{background:var(--warn-bg);color:var(--warn-fg);border-radius:var(--r);padding:16px;display:flex;flex-direction:column;gap:10px}
+.hard{background:var(--soft);border-radius:var(--r);padding:18px;display:flex;flex-direction:column;gap:12px}
+.toggle{display:flex;justify-content:space-between;align-items:center;gap:12px;background:var(--surface);border-radius:var(--r);padding:14px 16px;border:0;width:100%;text-align:left}
+.sw{width:46px;height:28px;border-radius:999px;background:var(--line);position:relative;flex:none;transition:background .2s}
+.sw::after{content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:var(--surface);transition:transform .2s}
+.toggle[aria-pressed="true"] .sw{background:var(--accent)}
+.toggle[aria-pressed="true"] .sw::after{transform:translateX(18px)}
+/* progreso */
+.pbar{height:10px;border-radius:999px;background:var(--soft);overflow:hidden}
+.pbar > i{display:block;height:100%;background:var(--accent);border-radius:999px;transition:width .5s ease}
+.todaybar{display:flex;flex-direction:column;gap:8px}
+.todaybar .lbl{display:flex;justify-content:space-between;font-size:.9rem}
+.todaybar b{font-variant-numeric:tabular-nums}
+.pop{animation:pop .6s ease}
+@keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.04)}100%{transform:scale(1)}}
+.garden{display:grid;grid-template-columns:120px 1fr;gap:16px;align-items:center}
+.garden svg{width:120px;height:140px;max-width:100%}
+.garden > div{min-width:0;display:flex;flex-direction:column;gap:8px}
+.week{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;align-items:end;height:120px}
+.week .col{display:flex;flex-direction:column;align-items:center;gap:4px;height:100%;justify-content:flex-end}
+.week .b{width:100%;max-width:28px;border-radius:6px 6px 3px 3px;background:var(--accent);min-height:3px}
+.week .b.zero{background:var(--soft)}
+.week .n{font-size:.75rem;font-variant-numeric:tabular-nums;color:var(--muted)}
+.week .d{font-size:.7rem;color:var(--muted)}
+.heat{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.heat .wd{font-size:.7rem;color:var(--muted);text-align:center}
+.heat .c{aspect-ratio:1;border-radius:6px;background:var(--soft);display:flex;align-items:center;justify-content:center;font-size:.7rem;color:var(--muted);font-variant-numeric:tabular-nums;max-width:100%}
+.heat .c.today{outline:2px solid var(--fg);outline-offset:1px}
+.legend{display:flex;gap:10px;flex-wrap:wrap;font-size:.75rem;color:var(--muted);align-items:center}
+.legend span{display:inline-flex;align-items:center;gap:4px}
+.legend i{width:12px;height:12px;border-radius:3px;display:inline-block}
+.insight{border-left:3px solid var(--sun);padding:4px 0 4px 12px}
+.insight b{font-variant-numeric:tabular-nums}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.stat{background:var(--surface);border-radius:12px;padding:12px;min-width:0}
+.stat .v{font-family:var(--display);font-size:1.5rem;font-weight:700;font-variant-numeric:tabular-nums}
+.stat .k{font-size:.75rem;color:var(--muted)}
+/* hábitos */
+.habit{display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)}
+.habit:last-child{border-bottom:0}
+.check{width:34px;height:34px;border-radius:10px;border:2px solid var(--line);background:var(--surface);display:flex;align-items:center;justify-content:center;font-size:1rem;color:transparent}
+.check[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-fg)}
+.habit .info{min-width:0;display:flex;flex-direction:column;gap:4px}
+.dots{display:flex;gap:4px;align-items:center}
+.dots i{width:9px;height:9px;border-radius:50%;background:var(--soft)}
+.dots i.on{background:var(--accent)}
+.dots span{font-size:.75rem;color:var(--muted);margin-left:6px;font-variant-numeric:tabular-nums}
+/* timer */
+.timer{font-family:var(--display);font-size:3rem;font-weight:700;font-variant-numeric:tabular-nums;line-height:1}
+.contact{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.contact:last-child{border-bottom:0}
+.contact .who{min-width:0}
+.contact .ph{font-variant-numeric:tabular-nums;user-select:all;color:var(--muted);font-size:.9rem}
+a{color:var(--accent)}
+ul.plain{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:4px}
+nav.tabs{position:fixed;left:0;right:0;bottom:0;background:var(--surface);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(4,1fr);padding:6px 8px calc(6px + env(safe-area-inset-bottom,0px))}
+nav.tabs button{border:0;background:none;padding:8px 4px;border-radius:10px;font-size:.8rem;font-weight:600;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:2px}
+nav.tabs button svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+nav.tabs button[aria-current="page"]{color:var(--accent);background:var(--soft)}
+.confirm{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+@media (max-width:360px){.garden{grid-template-columns:1fr}.stats{grid-template-columns:1fr 1fr}}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+</style>
 </head>
 <body>
-  <main class="app">
-    <header class="cabeza">
-      <p class="fecha" id="fecha"></p>
-      <h1 id="saludo">Hola</h1>
-    </header>
 
-    <!-- Solo aparece en modo día difícil -->
-    <section class="tarjeta dificil-tarjeta solo-dificil" aria-live="polite">
-      <h2>Hoy es un día difícil. Está bien.</h2>
-      <p>Hoy no tienes que hacer nada más. Con estar aquí ya es suficiente.</p>
-      <p class="recuerdo" id="recuerdo" hidden></p>
-      <div class="fila-botones">
-        <button class="boton suave" data-abrir="apoyo">Ver mi plan de apoyo</button>
-        <button class="boton texto" id="salirDificil">Ya me siento un poquito mejor</button>
-      </div>
-    </section>
 
-    <!-- 1. Ánimo: lo único importante -->
-    <section class="tarjeta" id="tarjetaAnimo">
-      <h2>¿Cómo te sientes ahorita?</h2>
-      <div class="caras" id="caras" role="radiogroup" aria-label="Tu ánimo de 1 a 5"></div>
-      <p class="respuesta" id="respuestaAnimo" aria-live="polite"></p>
-      <button class="enlace" id="sugerirDificil" hidden>¿Activar el modo día difícil?</button>
+<div class="wrap">
 
-      <details class="opcional" id="detallesHoy">
-        <summary>Agregar algo más <span>(opcional)</span></summary>
-        <p class="pista">Si quieres, marca lo que pasó hoy. Sirve para ver patrones más adelante.</p>
-        <div class="chips" id="chips"></div>
-        <label class="campo">
-          <span>Algo que estuvo bien hoy</span>
-          <span class="fila-campo">
-            <input type="text" id="nuevaCosaBuena" maxlength="140" placeholder="Por pequeño que sea" autocomplete="off">
-            <button class="boton suave chico" id="guardarCosaBuena">Guardar</button>
-          </span>
-        </label>
-        <ul class="lista-buenas" id="buenasHoy"></ul>
-      </details>
-    </section>
+<!-- ================= HOY ================= -->
+<section id="v-hoy" class="view">
+  <header class="top">
+    <div>
+      <h3 id="dayLabel">Hoy</h3>
+      <h1 id="dayTitle">¿Cómo estás?</h1>
+    </div>
+    <div class="daynav">
+      <button class="iconbtn" id="prevDay" aria-label="Día anterior">‹</button>
+      <button class="iconbtn" id="nextDay" aria-label="Día siguiente">›</button>
+    </div>
+  </header>
 
-    <!-- 2. Una cosa ahora: el corazón -->
-    <section class="tarjeta una-cosa" id="unaCosa">
-      <p class="etiqueta">Una cosa ahora</p>
-      <p class="sugerencia" id="sugerencia" aria-live="polite"></p>
-      <p class="amable" id="amable" hidden></p>
-      <div class="fila-botones" id="botonesCosa">
-        <button class="boton principal" id="laHice">La hice</button>
-        <button class="boton suave" id="masFacil">Otra más fácil</button>
-      </div>
-      <div class="celebra" id="celebra" hidden aria-live="polite">
-        <div class="ondas" aria-hidden="true"><span></span><span></span><span></span></div>
-        <p class="celebra-texto" id="celebraTexto">Bien hecho. Eso cuenta.</p>
-        <button class="boton texto" id="otraCosa">Otra cosa pequeña</button>
-      </div>
-    </section>
+  <div class="banner" id="lowBanner" hidden>
+    <p><strong>Llevas unos días muy pesados.</strong> No tienes que cargarlos solo. Escríbele a alguien de confianza o revisa tu plan de apoyo.</p>
+    <div class="row"><button class="btn small" data-go="apo">Abrir mi plan de apoyo</button></div>
+  </div>
 
-    <!-- 3. Modo 10 minutos -->
-    <section class="tarjeta oculto-dificil">
-      <button class="diez" id="abrirDiez">
-        <span class="diez-icono" aria-hidden="true">10</span>
-        <span><strong>Modo 10 minutos</strong><small>Para empezar algo difícil. Solo 10, y si quieres paras.</small></span>
-      </button>
-    </section>
+  <div class="card todaybar" id="todayBar">
+    <div class="lbl"><span>Pasos de hoy</span><b id="stepsTxt">0 de 3</b></div>
+    <div class="pbar"><i id="stepsBar" style="width:0%"></i></div>
+    <p class="small muted" id="stepsMsg">Cada cosa que hagas, por pequeña que sea, cuenta como un paso.</p>
+  </div>
 
-    <button class="boton dificil-boton oculto-dificil" id="entrarDificil">Hoy es un día difícil</button>
+  <button class="toggle" id="hardToggle" aria-pressed="false">
+    <span><strong>Modo día difícil</strong><br><span class="small muted">Solo lo mínimo, sin presión</span></span>
+    <span class="sw" aria-hidden="true"></span>
+  </button>
 
-    <!-- Lo demás, escondido -->
-    <section class="mas">
-      <details class="seccion oculto-dificil" id="seccionBuenas">
-        <summary>Cosas que estuvieron bien</summary>
-        <div class="seccion-cuerpo">
-          <p class="pista">Lo que fuiste guardando. Para leer en un día gris.</p>
-          <ul class="lista-buenas" id="buenasTodas"></ul>
-        </div>
-      </details>
+  <div class="hard" id="hardBox" hidden>
+    <p class="big">Hoy basta con poco. Si logras una de estas, ya cuenta.</p>
+    <div class="chips" id="hardChips"></div>
+  </div>
 
-      <details class="seccion oculto-dificil" id="seccionPatrones">
-        <summary>Patrones</summary>
-        <div class="seccion-cuerpo">
-          <div class="mes-nav">
-            <button class="boton texto chico" id="mesAnterior" aria-label="Mes anterior">‹</button>
-            <strong id="mesTitulo"></strong>
-            <button class="boton texto chico" id="mesSiguiente" aria-label="Mes siguiente">›</button>
-          </div>
-          <div class="calendario" id="calendario"></div>
-          <div class="leyenda" id="leyenda"></div>
-          <p class="detalle-dia" id="detalleDia" aria-live="polite"></p>
-          <h3>Comparaciones</h3>
-          <div id="comparaciones"></div>
-        </div>
-      </details>
+  <div class="card" id="oneCard">
+    <h3>Una cosa ahora</h3>
+    <p class="big" id="oneText"></p>
+    <p class="small muted" id="oneSub"></p>
+    <div class="row">
+      <button class="btn" id="oneDone">La hice</button>
+      <button class="btn ghost" id="oneNext">Otra más fácil</button>
+    </div>
+    <p class="saved" id="oneMsg" aria-live="polite"></p>
+  </div>
 
-      <details class="seccion" id="seccionApoyo">
-        <summary>Plan de apoyo</summary>
-        <div class="seccion-cuerpo">
-          <h3>Cuando esté mal, puedo:</h3>
-          <ul class="plan">
-            <li>Escribirle a alguien de confianza, aunque sea un "hoy no estoy bien".</li>
-            <li>Tomar agua y comer algo pequeño.</li>
-            <li>Darme una ducha o lavarme la cara.</li>
-            <li>Salir un ratico a la puerta o al balcón.</li>
-            <li>Recordar que este momento no es para siempre.</li>
-          </ul>
+  <div class="card">
+    <h2>Ánimo</h2>
+    <div class="scale" id="moodScale"></div>
+    <p class="small muted" id="zeroMsg" hidden>Si hoy no hiciste nada, igual viniste a registrar cómo estás. Eso cuenta.</p>
+  </div>
 
-          <h3>Mis personas de confianza</h3>
-          <ul class="contactos" id="contactos"></ul>
-          <details class="opcional">
-            <summary>Agregar a alguien</summary>
-            <form class="form-contacto" id="formContacto">
-              <label class="campo"><span>Nombre</span><input type="text" id="contactoNombre" maxlength="40" required autocomplete="off"></label>
-              <label class="campo"><span>Número de WhatsApp</span><input type="tel" id="contactoTel" maxlength="20" placeholder="0414 123 4567" required autocomplete="off"></label>
-              <button class="boton suave" type="submit">Guardar</button>
-            </form>
-          </details>
-
-          <div class="urgencia">
-            <p>Si sientes que estás en peligro o piensas en hacerte daño, llama ya a emergencias o pídele a alguien que esté contigo.</p>
-            <a class="boton suave" href="tel:911">Llamar al 911</a>
-          </div>
-        </div>
-      </details>
-
-      <details class="seccion oculto-dificil" id="seccionAjustes">
-        <summary>Ajustes</summary>
-        <div class="seccion-cuerpo">
-          <h3>Recordatorio diario</h3>
-          <label class="interruptor">
-            <input type="checkbox" id="recordatorioActivo">
-            <span>Recordarme marcar el ánimo</span>
-          </label>
-          <label class="campo en-linea" id="campoHora" hidden>
-            <span>A esta hora</span>
-            <input type="time" id="recordatorioHora" value="20:00">
-          </label>
-          <p class="pista" id="recordatorioNota" hidden></p>
-
-          <h3>Apariencia</h3>
-          <div class="segmentos" id="tema" role="radiogroup" aria-label="Tema">
-            <button data-tema="auto">Automático</button>
-            <button data-tema="claro">Claro</button>
-            <button data-tema="oscuro">Oscuro</button>
-          </div>
-
-          <h3>Respaldo</h3>
-          <p class="pista">Tus datos viven solo en este teléfono. Nada se envía a ningún lado. Descarga un respaldo de vez en cuando.</p>
-          <div class="fila-botones">
-            <button class="boton suave" id="descargar">Descargar mis datos</button>
-            <label class="boton suave">
-              Restaurar desde archivo
-              <input type="file" id="restaurar" accept="application/json,.json" hidden>
-            </label>
-          </div>
-          <p class="pista" id="respaldoMensaje" aria-live="polite"></p>
-        </div>
-      </details>
-    </section>
-
-    <p class="pie">Tus datos se quedan en este teléfono.</p>
-  </main>
-
-  <!-- Temporizador de 10 minutos -->
-  <div class="diez-pantalla" id="diezPantalla" hidden role="dialog" aria-modal="true" aria-labelledby="diezTitulo">
-    <div class="diez-contenido">
-      <div id="diezCorriendo">
-        <p class="etiqueta" id="diezTitulo">Solo 10 minutos</p>
-        <div class="anillo">
-          <svg viewBox="0 0 200 200" aria-hidden="true">
-            <circle class="anillo-fondo" cx="100" cy="100" r="88"/>
-            <circle class="anillo-avance" id="anilloAvance" cx="100" cy="100" r="88"/>
-          </svg>
-          <p class="reloj" id="reloj" role="timer">10:00</p>
-        </div>
-        <p class="pista centrada">Si quieres parar antes, también está bien.</p>
-        <div class="fila-botones centrada">
-          <button class="boton suave" id="diezPausa">Pausar</button>
-          <button class="boton texto" id="diezCerrar">Terminar</button>
-        </div>
-      </div>
-      <div id="diezFin" hidden>
-        <p class="etiqueta">Pasaron 10 minutos</p>
-        <h2>¿Quieres seguir o parar?</h2>
-        <p class="pista centrada">Las dos respuestas están bien.</p>
-        <div class="fila-botones centrada">
-          <button class="boton principal" id="diezSeguir">Seguir 10 más</button>
-          <button class="boton suave" id="diezParar">Parar aquí</button>
-        </div>
-      </div>
-      <div id="diezAdios" hidden>
-        <h2 id="diezAdiosTexto">Empezaste, y eso era lo difícil.</h2>
-        <div class="fila-botones centrada">
-          <button class="boton principal" id="diezListo">Listo</button>
-        </div>
-      </div>
+  <div class="card" id="claseCard">
+    <h2>¿Fuiste a clase hoy?</h2>
+    <div class="seg" id="claseSeg">
+      <button data-v="si">Sí</button><button data-v="no">No pude</button><button data-v="nt">No tenía</button>
+    </div>
+    <div id="claseNo" hidden style="display:flex;flex-direction:column;gap:10px">
+      <p>Está bien. Un día malo no define tu semestre. Para no quedarte atrás, basta con una de estas:</p>
+      <ul class="plain small">
+        <li>Pedirle a un compañero lo que vieron hoy.</li>
+        <li>Revisar el tema 10 minutos con Claude.</li>
+        <li>Anotar qué clase faltó, para ponerte al día otro día.</li>
+      </ul>
+      <div class="row"><button class="btn small" id="claseTimer">Empezar 10 minutos</button></div>
     </div>
   </div>
 
-  <script src="app.js"></script>
+  <div class="card" id="timerCard">
+    <h3>Modo 10 minutos</h3>
+    <div id="tIdle">
+      <p class="small muted" style="margin-bottom:12px">Para empezar algo que cuesta, como estudiar. Solo 10 minutos; después decides.</p>
+      <button class="btn" id="tStart">Empezar 10 minutos</button>
+    </div>
+    <div id="tRun" hidden style="display:flex;flex-direction:column;gap:12px">
+      <div class="timer" id="tClock" aria-live="off">10:00</div>
+      <p class="small muted">Deja el teléfono a un lado. Aquí te espero.</p>
+      <div class="row"><button class="btn ghost small" id="tStop">Parar</button></div>
+    </div>
+    <div id="tEnd" hidden style="display:flex;flex-direction:column;gap:12px">
+      <p class="big">Lo lograste: 10 minutos.</p>
+      <p class="small muted">¿Sigues 10 más o paras aquí? Las dos respuestas están bien.</p>
+      <div class="row"><button class="btn" id="tMore">10 más</button><button class="btn ghost" id="tDone">Paro aquí</button></div>
+    </div>
+  </div>
+
+  <details class="card" id="moreCard">
+    <summary>Más detalles (opcional)</summary>
+    <h2>Energía</h2>
+    <div class="scale" id="energyScale"></div>
+    <label class="f" for="sleep">Horas de sueño (aprox.)
+      <input type="number" id="sleep" min="0" max="16" step="0.5" inputmode="decimal" placeholder="Ej. 7">
+    </label>
+    <label class="f" for="note">¿Qué pasó hoy?
+      <input type="text" id="note" maxlength="200" placeholder="Una línea basta">
+    </label>
+    <label class="f" for="good">Algo pequeño que estuvo bien
+      <input type="text" id="good" maxlength="200" placeholder="Un café, una canción, un video…">
+    </label>
+  </details>
+
+  <div class="card" id="todayActsCard">
+    <h2>Si hiciste alguna, márcala</h2>
+    <div class="acts" id="todayActs"></div>
+  </div>
+  <p class="saved" id="savedMsg" aria-live="polite"></p>
+</section>
+
+<!-- ================= HÁBITOS ================= -->
+<section id="v-hab" class="view" hidden>
+  <header><h3>Orden y rutina</h3><h1>Mis hábitos</h1></header>
+  <p class="muted">Pequeños hábitos para ir ordenando tu día. No hay que hacerlos todos: cada uno que marques suma un paso y llena su semana.</p>
+  <div class="card" id="habitsBox"></div>
+  <details class="card">
+    <summary>Editar mi lista de actividades</summary>
+    <p class="small muted">Toca una actividad para quitarla, o agrega una tuya.</p>
+    <div class="acts" id="editActs"></div>
+    <div class="confirm" id="delConfirm" hidden></div>
+    <label class="f" for="newAct">Nueva actividad<input type="text" id="newAct" maxlength="60" placeholder="Ej. caminar 10 minutos"></label>
+    <label class="f" for="newCat">Grupo
+      <select id="newCat"><option>Cuerpo</option><option>Conexión</option><option>Logro</option><option>Disfrute</option></select>
+    </label>
+    <div class="row"><button class="btn small" id="addAct">Agregar</button></div>
+    <h3 style="margin-top:8px">Mínimos del día difícil (hasta 3)</h3>
+    <div class="chips" id="hardPick"></div>
+  </details>
+</section>
+
+<!-- ================= PROGRESO ================= -->
+<section id="v-pro" class="view" hidden>
+  <header><h3>Lo que has ido construyendo</h3><h1>Mi progreso</h1></header>
+
+  <div class="card">
+    <div class="garden">
+      <svg id="plant" viewBox="0 0 120 140" role="img" aria-label="Tu planta"></svg>
+      <div>
+        <h3 id="stageName">Semilla</h3>
+        <p class="big" id="totalSteps">0 pasos</p>
+        <div class="pbar"><i id="stageBar" style="width:0%"></i></div>
+        <p class="small muted" id="stageNext"></p>
+      </div>
+    </div>
+    <p class="small muted">Tu planta crece con cada paso y nunca se marchita. Los días sin pasos simplemente no suman.</p>
+  </div>
+
+  <div class="card">
+    <h2>Esta semana</h2>
+    <div class="week" id="week"></div>
+    <p class="small muted" id="weekMsg"></p>
+  </div>
+
+  <div class="stats" id="stats"></div>
+
+  <div class="card">
+    <h2>Ánimo, últimas 5 semanas</h2>
+    <div class="heat" id="heat"></div>
+    <div class="legend">
+      <span><i style="background:var(--m1)"></i>1</span><span><i style="background:var(--m2)"></i>2</span><span><i style="background:var(--m3)"></i>3</span><span><i style="background:var(--m4)"></i>4</span><span><i style="background:var(--m5)"></i>5</span><span><i style="background:var(--soft)"></i>sin registro</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Lo que noto</h2>
+    <div id="insights" style="display:flex;flex-direction:column;gap:12px"></div>
+  </div>
+
+  <div class="card">
+    <h2>Cosas que estuvieron bien</h2>
+    <div id="goods" class="small" style="display:flex;flex-direction:column;gap:6px"></div>
+  </div>
+</section>
+
+<!-- ================= APOYO ================= -->
+<section id="v-apo" class="view" hidden>
+  <header><h3>Llénalo en un día tranquilo</h3><h1>Mi plan de apoyo</h1></header>
+  <div class="card">
+    <h2>Personas de confianza</h2>
+    <div id="contacts"></div>
+    <div class="row">
+      <input type="text" id="cName" placeholder="Nombre" style="flex:1 1 140px" aria-label="Nombre">
+      <input type="tel" id="cPhone" placeholder="Teléfono, ej. 58414…" style="flex:1 1 160px" aria-label="Teléfono">
+    </div>
+    <div class="row"><button class="btn small" id="addContact">Agregar persona</button></div>
+  </div>
+  <div class="card">
+    <label class="f" for="pSigns">Señales de que estoy empeorando<textarea id="pSigns" placeholder="Ej. dejo de comer bien, no salgo del cuarto, falto a clase varios días…"></textarea></label>
+    <label class="f" for="pHelps">Cosas que me ayudan<textarea id="pHelps" placeholder="Ej. salir al sol, ir al gym, un video de Illojuan…"></textarea></label>
+    <label class="f" for="pLine">Línea de ayuda<input type="text" id="pLine" placeholder="Número de una línea de apoyo emocional"></label>
+    <label class="f" for="pReason">Una razón para seguir adelante<textarea id="pReason" placeholder="Algo que te importa de tu vida"></textarea></label>
+    <p class="saved" id="planSaved" aria-live="polite"></p>
+  </div>
+  <details class="card">
+    <summary>Respaldo de mis datos</summary>
+    <p class="small muted">Tus datos viven solo en este teléfono. Haz un respaldo de vez en cuando.</p>
+    <div class="row"><button class="btn small" id="copyBk">Copiar respaldo</button><button class="btn small ghost" id="dlBk">Descargar archivo</button></div>
+    <p class="saved" id="bkMsg" aria-live="polite"></p>
+    <label class="f" for="bkText">Restaurar desde un respaldo<textarea id="bkText" placeholder="Pega aquí el texto del respaldo"></textarea></label>
+    <div class="row"><label class="btn small ghost" for="bkFile" style="cursor:pointer">Elegir archivo</label><input type="file" id="bkFile" accept=".json,application/json" hidden></div>
+    <div class="confirm" id="restoreRow"><button class="btn small ghost" id="restoreBk">Restaurar</button></div>
+  </details>
+  <p class="small muted">Esta app te acompaña, pero no reemplaza a tu psiquiatra ni a tu tratamiento.</p>
+</section>
+</div>
+
+<nav class="tabs" aria-label="Secciones">
+  <button data-tab="hoy" aria-current="page"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>Hoy</button>
+  <button data-tab="hab"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8.5 12l2.5 2.5 4.5-5"/></svg>Hábitos</button>
+  <button data-tab="pro"><svg viewBox="0 0 24 24"><path d="M12 21v-9"/><path d="M12 12c0-4 3-6 7-6 0 4-3 6-7 6zM12 15c0-3-2.5-5-6-5 0 3 2.5 5 6 5z"/><path d="M8 21h8"/></svg>Progreso</button>
+  <button data-tab="apo"><svg viewBox="0 0 24 24"><path d="M12 21s-7-4.4-9.2-9A5 5 0 0 1 12 6.5 5 5 0 0 1 21.2 12C19 16.6 12 21 12 21z"/></svg>Apoyo</button>
+</nav>
+
+<script>
+(function(){
+const KEY='mianimo.v1';
+const CATS=['Cuerpo','Conexión','Logro','Disfrute'];
+const MOOD_L=['Muy mal','Mal','Regular','Bien','Muy bien'];
+const EN_L=['Sin energía','Poca','Algo','Buena','Mucha'];
+const DEFAULT_ACTS=[
+ ['Tomar un vaso de agua','Cuerpo'],['Abrir la ventana o la cortina','Cuerpo'],['Lavarme la cara','Cuerpo'],['Estirarme 2 minutos en la cama','Cuerpo'],['Comer algo, lo que sea','Cuerpo'],['Cambiarme de ropa','Cuerpo'],['Ducharme','Cuerpo'],['Salir 5 minutos al sol','Cuerpo'],
+ ['Mandarle un sticker a alguien','Conexión'],['Responder un mensaje pendiente','Conexión'],['Sentarme un rato donde está mi familia','Conexión'],['Hablar un rato con mi hermano','Conexión'],
+ ['Recoger una sola cosa del cuarto','Logro'],['Lavar un plato','Logro'],['Abrir el cuaderno 5 minutos','Logro'],['Estudiar 10 minutos con Claude','Logro'],
+ ['Poner una canción que me guste','Disfrute'],['Ver un video de Illojuan','Disfrute'],['Comer algo que me guste','Disfrute'],['Caminar una cuadra','Disfrute']
+];
+const EASY=['Tomar un vaso de agua','Abrir la ventana o la cortina','Lavarme la cara'];
+const MORNING=['Abrir la ventana o la cortina','Lavarme la cara','Tomar un vaso de agua','Cambiarme de ropa','Salir 5 minutos al sol'];
+const NIGHT=['Tomar un vaso de agua','Recoger una sola cosa del cuarto','Poner una canción que me guste','Estirarme 2 minutos en la cama'];
+const TINY=['Respirar hondo tres veces','Sentarme en la cama un momento','Poner los pies en el suelo'];
+const DEFAULT_HABITS=[
+ ['Tender la cama','Orden'],['Recoger la ropa del día','Orden'],['Lavar lo que usé','Orden'],['Dejar listo lo de mañana','Orden'],
+ ['Levantarme antes de las 9','Rutina'],['Comer tres veces','Rutina'],['Ir al gym o moverme 15 min','Rutina'],['Dormir antes de las 12','Rutina'],
+ ['Revisar qué tengo mañana','Estudio'],['Estudiar 10 minutos','Estudio']
+];
+const STAGES=[[0,'Semilla'],[10,'Brote'],[30,'Plantita'],[60,'Planta'],[100,'Arbusto'],[160,'Árbol joven'],[250,'Árbol en flor']];
+
+function uid(){return Math.random().toString(36).slice(2,9)}
+function mk(list){return list.map(([n,c])=>({id:uid(),name:n,cat:c}))}
+function fresh(){
+  const acts=mk(DEFAULT_ACTS);
+  return {v:3,entries:{},activities:acts,habits:mk(DEFAULT_HABITS),hardIds:acts.filter(a=>EASY.includes(a.name)).map(a=>a.id),plan:{signs:'',helps:'',line:'',reason:'',contacts:[]},hard:false};
+}
+let S;
+try{S=JSON.parse(localStorage.getItem(KEY))}catch(e){S=null}
+if(!S||!S.activities){S=fresh()}
+function migrate(){
+  if(S.v!==2&&S.v!==3){const f=fresh();S.activities=f.activities;S.hardIds=f.hardIds;Object.values(S.entries||{}).forEach(e=>{e.acts=[]});if(S.plan)delete S.plan.pro;S.v=2}
+  if(S.v===2){
+    S.activities.forEach(a=>{if(a.name==='Ver un video corto que me haga reír')a.name='Ver un video de Illojuan'});
+    S.activities=S.activities.filter(a=>a.name!=='Tender la cama');
+    S.habits=S.habits||mk(DEFAULT_HABITS);S.v=3;
+  }
+  S.entries=S.entries||{};S.plan=S.plan||fresh().plan;S.plan.contacts=S.plan.contacts||[];S.hardIds=S.hardIds||[];S.habits=S.habits||mk(DEFAULT_HABITS);
+}
+migrate();
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+
+const $=id=>document.getElementById(id);
+function key(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+const TODAY=key(new Date());
+let cur=new Date();cur.setHours(12,0,0,0);
+function curKey(){return key(cur)}
+function entry(k){const e=S.entries[k]||(S.entries[k]={});e.acts=e.acts||[];e.habits=e.habits||[];return e}
+function steps(e){if(!e)return 0;return (e.acts||[]).length+(e.habits||[]).length+(e.focus||0)}
+function totalSteps(){return Object.values(S.entries).reduce((s,e)=>s+steps(e),0)}
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+const timers={};
+function flash(el,msg){el.textContent=msg;clearTimeout(timers[el.id]);timers[el.id]=setTimeout(()=>{el.textContent=''},2200)}
+function pulse(el){el.classList.remove('pop');void el.offsetWidth;el.classList.add('pop')}
+
+/* ---------- Tabs ---------- */
+const views={hoy:'v-hoy',hab:'v-hab',pro:'v-pro',apo:'v-apo'};
+function go(t){
+  Object.entries(views).forEach(([k,v])=>{$(v).hidden=k!==t});
+  document.querySelectorAll('nav.tabs button').forEach(b=>{if(b.dataset.tab===t)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current')});
+  ({hoy:renderDay,hab:renderHabits,pro:renderProgress,apo:renderPlan})[t]();
+  try{localStorage.setItem(KEY+'.tab',t)}catch(e){}
+  window.scrollTo(0,0);
+}
+document.querySelectorAll('nav.tabs button').forEach(b=>b.addEventListener('click',()=>go(b.dataset.tab)));
+document.addEventListener('click',e=>{const g=e.target.closest('[data-go]');if(g)go(g.dataset.go)});
+
+/* ---------- Hoy ---------- */
+function scale(el,labels,field,colored){
+  el.innerHTML='';const e=S.entries[curKey()]||{};
+  labels.forEach((l,i)=>{
+    const b=document.createElement('button');
+    b.setAttribute('aria-pressed',e[field]===i+1?'true':'false');
+    b.innerHTML=(colored?'<span class="dot" style="background:var(--m'+(i+1)+')"></span>':'')+'<span class="num">'+(i+1)+'</span><span class="lbl">'+l+'</span>';
+    b.addEventListener('click',()=>{const en=entry(curKey());en[field]=(en[field]===i+1)?undefined:i+1;save();renderDay();flash($('savedMsg'),'Guardado')});
+    el.appendChild(b);
+  });
+}
+function toggleAct(id){const e=entry(curKey());const i=e.acts.indexOf(id);if(i>=0)e.acts.splice(i,1);else{e.acts.push(id);pulse($('todayBar'))}save();renderDay()}
+function actChip(a,en){
+  const b=document.createElement('button');b.className='chip';
+  b.setAttribute('aria-pressed',(en.acts||[]).includes(a.id)?'true':'false');b.textContent=a.name;
+  b.addEventListener('click',()=>toggleAct(a.id));return b;
+}
+function renderSteps(){
+  const n=steps(S.entries[curKey()]);
+  $('stepsTxt').textContent=n+(n<3?' de 3':(n===1?' paso':' pasos'));
+  $('stepsBar').style.width=Math.min(100,n/3*100)+'%';
+  $('stepsMsg').textContent=n===0?'Cada cosa que hagas, por pequeña que sea, cuenta como un paso.':n<3?'Vas bien. Con 3 pasos ya es un buen día.':'Hoy ya diste '+n+' pasos. Eso es un buen día, de verdad.';
+}
+function renderDay(){
+  const k=curKey(),isToday=k===TODAY;
+  const fmt=cur.toLocaleDateString('es-VE',{weekday:'long',day:'numeric',month:'long'});
+  $('dayLabel').textContent=isToday?'Hoy · '+fmt:fmt;
+  $('dayTitle').textContent=isToday?'¿Cómo estás hoy?':'¿Cómo estuviste?';
+  $('nextDay').disabled=isToday;
+  const en=S.entries[k]||{acts:[]};
+  scale($('moodScale'),MOOD_L,'mood',true);
+  scale($('energyScale'),EN_L,'energy',false);
+  $('sleep').value=en.sleep??'';$('note').value=en.note||'';$('good').value=en.good||'';
+  document.querySelectorAll('#claseSeg button').forEach(b=>b.setAttribute('aria-pressed',en.clase===b.dataset.v?'true':'false'));
+  $('claseNo').hidden=en.clase!=='no';
+  $('hardToggle').setAttribute('aria-pressed',S.hard?'true':'false');
+  $('hardBox').hidden=!S.hard;['moreCard','todayActsCard','claseCard','timerCard'].forEach(id=>$(id).hidden=S.hard);
+  const hc=$('hardChips');hc.innerHTML='';
+  S.activities.filter(a=>S.hardIds.includes(a.id)).forEach(a=>hc.appendChild(actChip(a,en)));
+  const box=$('todayActs');box.innerHTML='';
+  CATS.forEach(c=>{
+    const list=S.activities.filter(a=>a.cat===c);if(!list.length)return;
+    const g=document.createElement('div');g.className='group';g.innerHTML='<h3>'+c+'</h3>';
+    const ch=document.createElement('div');ch.className='chips';list.forEach(a=>ch.appendChild(actChip(a,en)));g.appendChild(ch);box.appendChild(g);
+  });
+  $('zeroMsg').hidden=!(en.mood&&!steps(en));
+  renderSteps();renderOne();
+  let low=0;const d=new Date();d.setHours(12);
+  for(let i=0;i<3;i++){const e=S.entries[key(d)];if(e&&e.mood===1)low++;d.setDate(d.getDate()-1)}
+  $('lowBanner').hidden=low<3;
+}
+$('prevDay').addEventListener('click',()=>{cur.setDate(cur.getDate()-1);oneIdx=0;skips=0;renderDay()});
+$('nextDay').addEventListener('click',()=>{if(curKey()!==TODAY){cur.setDate(cur.getDate()+1);oneIdx=0;skips=0;renderDay()}});
+$('hardToggle').addEventListener('click',()=>{S.hard=!S.hard;save();oneIdx=0;renderDay()});
+[['sleep','sleep',true],['note','note'],['good','good']].forEach(([id,f,num])=>{
+  $(id).addEventListener('input',()=>{const e=entry(curKey());const v=$(id).value;e[f]=num?(v===''?undefined:Math.max(0,Math.min(16,parseFloat(v)))):v;save();flash($('savedMsg'),'Guardado')});
+});
+document.querySelectorAll('#claseSeg button').forEach(b=>b.addEventListener('click',()=>{const e=entry(curKey());e.clase=e.clase===b.dataset.v?undefined:b.dataset.v;save();renderDay()}));
+
+/* Una cosa ahora: según la hora, de lo más fácil a lo menos; "Otra más fácil" baja la exigencia */
+let oneIdx=0,skips=0;
+function pool(){
+  const done=(S.entries[curKey()]||{}).acts||[];
+  let base;
+  if(S.hard)base=S.activities.filter(a=>S.hardIds.includes(a.id));
+  else{
+    const h=new Date().getHours();
+    const pref=h<12?MORNING:h>=19?NIGHT:EASY;
+    const first=pref.map(n=>S.activities.find(a=>a.name===n)).filter(Boolean);
+    const easy=S.activities.filter(a=>EASY.includes(a.name)&&!first.includes(a));
+    const rest=S.activities.filter(a=>!first.includes(a)&&!easy.includes(a));
+    base=first.concat(easy,rest);
+  }
+  return base.filter(a=>!done.includes(a.id));
+}
+function renderOne(){
+  const p=pool();
+  if(skips>=3){
+    $('oneText').textContent=TINY[skips%TINY.length];
+    $('oneSub').textContent='Hoy está costando, y está bien no poder. Esto es lo más pequeño que hay; si tampoco sale, descansa.';
+    $('oneDone').hidden=false;$('oneNext').hidden=false;$('oneNext').textContent='Volver a empezar';return;
+  }
+  $('oneNext').textContent='Otra más fácil';
+  if(!p.length){$('oneText').textContent='Por hoy ya hiciste suficiente.';$('oneSub').textContent='Descansar también es parte de cuidarte.';$('oneDone').hidden=true;$('oneNext').hidden=true;return}
+  $('oneDone').hidden=false;$('oneNext').hidden=false;
+  if(oneIdx>=p.length)oneIdx=0;
+  $('oneText').textContent=p[oneIdx].name;
+  $('oneSub').textContent='No tienes que hacer nada más que esto. Y si no puedes, también está bien.';
+}
+$('oneDone').addEventListener('click',()=>{
+  const e=entry(curKey());
+  if(skips>=3){e.focus=(e.focus||0);e.tiny=(e.tiny||0)+1;e.acts.push('tiny-'+uid());}
+  else{const a=pool()[oneIdx];if(!a)return;e.acts.push(a.id)}
+  save();oneIdx=0;skips=0;flash($('oneMsg'),'Bien hecho. Eso cuenta.');pulse($('oneCard'));pulse($('todayBar'));renderDay();
+});
+$('oneNext').addEventListener('click',()=>{
+  if(skips>=3){skips=0;oneIdx=0;renderOne();return}
+  skips++;const p=pool();
+  const easyIdx=p.findIndex(a=>EASY.includes(a.name));
+  const curA=p[oneIdx];
+  if(curA&&!EASY.includes(curA.name)&&easyIdx>=0)oneIdx=easyIdx;else oneIdx=(oneIdx+1)%Math.max(1,p.length);
+  renderOne();
+});
+
+/* Modo 10 minutos */
+let tEnd=0,tInt=null;
+function tShow(w){$('tIdle').hidden=w!=='idle';$('tRun').hidden=w!=='run';$('tEnd').hidden=w!=='end'}
+function tTick(){
+  const left=Math.max(0,tEnd-Date.now());const m=Math.floor(left/60000),s=Math.floor(left%60000/1000);
+  $('tClock').textContent=m+':'+String(s).padStart(2,'0');
+  if(left<=0){clearInterval(tInt);tInt=null;const e=entry(TODAY);e.focus=(e.focus||0)+1;save();renderSteps();tShow('end');pulse($('timerCard'))}
+}
+function tStart(){tEnd=Date.now()+10*60000;tShow('run');tTick();clearInterval(tInt);tInt=setInterval(tTick,1000);$('timerCard').scrollIntoView({behavior:'smooth',block:'center'})}
+$('tStart').addEventListener('click',tStart);$('tMore').addEventListener('click',tStart);$('claseTimer').addEventListener('click',tStart);
+$('tStop').addEventListener('click',()=>{clearInterval(tInt);tInt=null;tShow('idle')});
+$('tDone').addEventListener('click',()=>{tShow('idle');flash($('savedMsg'),'Sumaste un paso. Bien hecho.')});
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&tInt)tTick()});
+
+/* ---------- Hábitos ---------- */
+function weekKeys(){const d=new Date();d.setHours(12);const dow=(d.getDay()+6)%7;d.setDate(d.getDate()-dow);const out=[];for(let i=0;i<7;i++){out.push(key(d));d.setDate(d.getDate()+1)}return out}
+function renderHabits(){
+  const box=$('habitsBox');box.innerHTML='';const wk=weekKeys();const today=entry(TODAY);
+  ['Orden','Rutina','Estudio'].forEach(cat=>{
+    const list=S.habits.filter(h=>h.cat===cat);if(!list.length)return;
+    const h3=document.createElement('h3');h3.textContent=cat;box.appendChild(h3);
+    const wrap=document.createElement('div');
+    list.forEach(h=>{
+      const row=document.createElement('div');row.className='habit';
+      const c=document.createElement('button');c.className='check';c.textContent='✓';
+      const on=today.habits.includes(h.id);c.setAttribute('aria-pressed',on?'true':'false');c.setAttribute('aria-label',(on?'Desmarcar ':'Marcar ')+h.name);
+      c.addEventListener('click',()=>{const e=entry(TODAY);const i=e.habits.indexOf(h.id);if(i>=0)e.habits.splice(i,1);else e.habits.push(h.id);save();renderHabits()});
+      const info=document.createElement('div');info.className='info';
+      const cnt=wk.filter(k=>(S.entries[k]?.habits||[]).includes(h.id)).length;
+      info.innerHTML='<span>'+esc(h.name)+'</span><div class="dots">'+wk.map(k=>'<i class="'+((S.entries[k]?.habits||[]).includes(h.id)?'on':'')+'"></i>').join('')+'<span>'+cnt+' esta semana</span></div>';
+      row.append(c,info);wrap.appendChild(row);
+    });
+    box.appendChild(wrap);
+  });
+  renderEdit();
+}
+let pendingDel=null;
+function renderEdit(){
+  const box=$('editActs');box.innerHTML='';
+  CATS.forEach(c=>{
+    const list=S.activities.filter(a=>a.cat===c);if(!list.length)return;
+    const g=document.createElement('div');g.className='group';g.innerHTML='<h3>'+c+'</h3>';
+    const ch=document.createElement('div');ch.className='chips';
+    list.forEach(a=>{const b=document.createElement('button');b.className='chip';b.append(a.name);const x=document.createElement('span');x.className='x';x.textContent='✕';b.appendChild(x);
+      b.setAttribute('aria-label','Quitar '+a.name);b.addEventListener('click',()=>{pendingDel=a.id;showDel(a)});ch.appendChild(b)});
+    g.appendChild(ch);box.appendChild(g);
+  });
+  const hp=$('hardPick');hp.innerHTML='';
+  S.activities.forEach(a=>{const b=document.createElement('button');b.className='chip';b.textContent=a.name;
+    b.setAttribute('aria-pressed',S.hardIds.includes(a.id)?'true':'false');
+    b.addEventListener('click',()=>{const i=S.hardIds.indexOf(a.id);if(i>=0)S.hardIds.splice(i,1);else{if(S.hardIds.length>=3)S.hardIds.shift();S.hardIds.push(a.id)}save();renderEdit()});
+    hp.appendChild(b)});
+}
+function showDel(a){
+  const r=$('delConfirm');r.hidden=false;r.innerHTML='';
+  const t=document.createElement('span');t.className='small';t.textContent='¿Quitar "'+a.name+'"?';
+  const y=document.createElement('button');y.className='btn small';y.textContent='Sí, quitar';
+  const n=document.createElement('button');n.className='btn small ghost';n.textContent='Cancelar';
+  y.onclick=()=>{S.activities=S.activities.filter(x=>x.id!==pendingDel);S.hardIds=S.hardIds.filter(x=>x!==pendingDel);save();r.hidden=true;renderEdit()};
+  n.onclick=()=>{r.hidden=true};r.append(t,y,n);
+}
+$('addAct').addEventListener('click',()=>{const n=$('newAct').value.trim();if(!n)return;S.activities.push({id:uid(),name:n,cat:$('newCat').value});$('newAct').value='';save();renderEdit()});
+
+/* ---------- Progreso ---------- */
+function avg(a){return a.length?a.reduce((s,x)=>s+x,0)/a.length:null}
+function f1(n){return n.toFixed(1).replace('.',',')}
+function drawPlant(level,t){
+  // level 0..6, t = avance hacia el siguiente nivel (0..1)
+  const g=level+t;const h=level===0?0:Math.min(92,14+g*13);
+  let s='<path d="M34 112 h52 l-6 24 h-40 z" fill="var(--pot)"/><rect x="30" y="106" width="60" height="9" rx="3" fill="var(--pot)"/>';
+  s+='<ellipse cx="60" cy="108" rx="26" ry="3" fill="var(--fg)" opacity=".18"/>';
+  if(level===0){s+='<ellipse cx="60" cy="104" rx="5" ry="3.5" fill="var(--sun)"/>';return s}
+  const top=106-h;
+  s+='<path d="M60 106 C58 '+(106-h*.5)+' 62 '+(106-h*.7)+' 60 '+top+'" stroke="var(--accent)" stroke-width="3" fill="none" stroke-linecap="round"/>';
+  const leaves=Math.min(12,2+Math.floor(g*1.8));
+  for(let i=0;i<leaves;i++){
+    const y=106-h*((i+1)/(leaves+1)), side=i%2?1:-1, len=9+Math.min(10,g*1.6)*(1-i/(leaves*1.6));
+    const x2=60+side*len,y2=y-len*.5;
+    s+='<path d="M60 '+y.toFixed(1)+' Q'+(60+side*len*.3).toFixed(1)+' '+(y-len*.8).toFixed(1)+' '+x2.toFixed(1)+' '+y2.toFixed(1)+' Q'+(60+side*len*.7).toFixed(1)+' '+(y+len*.1).toFixed(1)+' 60 '+y.toFixed(1)+'z" fill="var(--accent)" opacity="'+(0.75+0.25*(i%2))+'"/>';
+  }
+  if(level>=4){s+='<circle cx="60" cy="'+top+'" r="'+(level>=6?8:6)+'" fill="var(--m4)"/>'}
+  if(level>=6){[[-14,top+16],[15,top+22],[-8,top+34]].forEach(([dx,y])=>{s+='<circle cx="'+(60+dx)+'" cy="'+y+'" r="4" fill="var(--sun)"/>'});s+='<circle cx="60" cy="'+top+'" r="4" fill="var(--sun)"/>'}
+  return s;
+}
+function renderProgress(){
+  const tot=totalSteps();let lv=0;STAGES.forEach((st,i)=>{if(tot>=st[0])lv=i});
+  const next=STAGES[lv+1];const t=next?(tot-STAGES[lv][0])/(next[0]-STAGES[lv][0]):1;
+  $('plant').innerHTML=drawPlant(lv,t);
+  $('stageName').textContent=STAGES[lv][1];
+  $('totalSteps').textContent=tot+(tot===1?' paso':' pasos');
+  $('stageBar').style.width=(t*100)+'%';
+  $('stageNext').textContent=next?'Te faltan '+(next[0]-tot)+' para que sea '+next[1].toLowerCase()+'.':'Tu planta ya floreció. Sigue cuidándola.';
+  // semana
+  const wk=weekKeys();const vals=wk.map(k=>steps(S.entries[k]));const mx=Math.max(3,...vals);
+  $('week').innerHTML=wk.map((k,i)=>{const v=vals[i];const fut=k>TODAY;return '<div class="col"><span class="n">'+(fut?'':v)+'</span><div class="b'+(v?'':' zero')+'" style="height:'+(fut?0:Math.max(3,v/mx*80))+'px"></div><span class="d">'+'LMMJVSD'[i]+'</span></div>'}).join('');
+  const wsum=vals.reduce((a,b)=>a+b,0),wdays=vals.filter(v=>v>0).length;
+  $('weekMsg').textContent=wsum?'Esta semana llevas '+wsum+' pasos en '+wdays+(wdays===1?' día.':' días.'):'Esta semana aún no hay pasos. El primero puede ser un vaso de agua.';
+  // stats
+  const now=new Date();now.setHours(12);
+  function lastN(n,f){const out=[];const d=new Date(now);for(let i=0;i<n;i++){const e=S.entries[key(d)];if(e&&e[f]!=null)out.push(e[f]);d.setDate(d.getDate()-1)}return out}
+  const m7=avg(lastN(7,'mood'));
+  const clases=wk.map(k=>S.entries[k]?.clase).filter(v=>v==='si'||v==='no');
+  const fui=clases.filter(v=>v==='si').length;
+  const focus=Object.values(S.entries).reduce((s,e)=>s+(e.focus||0),0);
+  $('stats').innerHTML=[
+    ['Ánimo, 7 días',m7==null?'–':f1(m7)],
+    ['Clases esta semana',clases.length?fui+'/'+clases.length:'–'],
+    ['Bloques de 10 min',String(focus)]
+  ].map(([k,v])=>'<div class="stat"><div class="v">'+v+'</div><div class="k">'+k+'</div></div>').join('');
+  // heat
+  const h=$('heat');h.innerHTML='';
+  ['L','M','M','J','V','S','D'].forEach(w=>{const s=document.createElement('div');s.className='wd';s.textContent=w;h.appendChild(s)});
+  const start=new Date(now);const dow=(start.getDay()+6)%7;start.setDate(start.getDate()-dow-28);
+  for(let i=0;i<35;i++){const d=new Date(start);d.setDate(start.getDate()+i);const k=key(d);const e=S.entries[k];
+    const c=document.createElement('div');c.className='c';if(d>now)c.style.visibility='hidden';
+    if(e&&e.mood){c.style.background='var(--m'+e.mood+')';c.style.color='var(--fg)'}
+    if(k===TODAY)c.classList.add('today');c.textContent=d.getDate();h.appendChild(c)}
+  // insights
+  const days=Object.entries(S.entries).filter(([k,e])=>e.mood);const ins=[];
+  S.activities.concat(S.habits).forEach(a=>{
+    const did=e=>(e.acts||[]).includes(a.id)||(e.habits||[]).includes(a.id);
+    const yes=days.filter(([k,e])=>did(e)).map(([k,e])=>e.mood),no=days.filter(([k,e])=>!did(e)).map(([k,e])=>e.mood);
+    if(yes.length>=5&&no.length>=5)ins.push({d:avg(yes)-avg(no),html:'Los días que hiciste <strong>'+esc(a.name.toLowerCase())+'</strong> tu ánimo promedio fue <b>'+f1(avg(yes))+'</b>; los que no, <b>'+f1(avg(no))+'</b>.'});
+  });
+  const sl=days.filter(([k,e])=>e.sleep!=null);
+  const gd=sl.filter(([k,e])=>e.sleep>=7).map(([k,e])=>e.mood),bd=sl.filter(([k,e])=>e.sleep<7).map(([k,e])=>e.mood);
+  if(gd.length>=5&&bd.length>=5)ins.push({d:avg(gd)-avg(bd),html:'Cuando dormiste 7 horas o más tu ánimo promedio fue <b>'+f1(avg(gd))+'</b>; con menos, <b>'+f1(avg(bd))+'</b>.'});
+  ins.sort((a,b)=>Math.abs(b.d)-Math.abs(a.d));
+  $('insights').innerHTML=ins.length?ins.slice(0,5).map(i=>'<p class="insight">'+i.html+'</p>').join(''):'<p class="muted">Aquí aparecerán comparaciones cuando tengas al menos 5 días con una actividad y 5 sin ella. Llevas <strong>'+days.length+'</strong> '+(days.length===1?'día registrado':'días registrados')+'. Con dos o tres semanas ya empezarás a ver algo.</p>';
+  const gs=Object.entries(S.entries).filter(([k,e])=>e.good).sort((a,b)=>b[0].localeCompare(a[0])).slice(0,8);
+  $('goods').innerHTML=gs.length?gs.map(([k,e])=>'<p><span class="muted">'+new Date(k+'T12:00').toLocaleDateString('es-VE',{day:'numeric',month:'short'})+'</span> · '+esc(e.good)+'</p>').join(''):'<p class="muted">Lo que anotes en "algo pequeño que estuvo bien" se irá juntando aquí, para releerlo en los días grises.</p>';
+}
+
+/* ---------- Apoyo ---------- */
+const PF=['signs','helps','line','reason'];
+function pid(f){return 'p'+f[0].toUpperCase()+f.slice(1)}
+function renderPlan(){
+  const p=S.plan;PF.forEach(f=>{$(pid(f)).value=p[f]||''});
+  const box=$('contacts');box.innerHTML='';
+  if(!p.contacts.length)box.innerHTML='<p class="small muted">Agrega al menos una persona a quien escribirle cuando el día pese.</p>';
+  p.contacts.forEach((c,i)=>{
+    const row=document.createElement('div');row.className='contact';const digits=(c.phone||'').replace(/\D/g,'');
+    row.innerHTML='<div class="who"><strong>'+esc(c.name)+'</strong><div class="ph">'+esc(c.phone||'')+'</div></div>';
+    const act=document.createElement('div');act.className='row';
+    if(digits){const a=document.createElement('a');a.href='https://wa.me/'+digits;a.target='_blank';a.rel='noopener';a.className='btn small';a.textContent='WhatsApp';act.appendChild(a)}
+    const del=document.createElement('button');del.className='btn small ghost';del.textContent='Quitar';del.onclick=()=>{p.contacts.splice(i,1);save();renderPlan()};act.appendChild(del);
+    row.appendChild(act);box.appendChild(row);
+  });
+}
+PF.forEach(f=>{const el=$(pid(f));el.addEventListener('input',()=>{S.plan[f]=el.value;save();flash($('planSaved'),'Guardado')})});
+$('addContact').addEventListener('click',()=>{const n=$('cName').value.trim(),ph=$('cPhone').value.trim();if(!n)return;S.plan.contacts.push({name:n,phone:ph});$('cName').value='';$('cPhone').value='';save();renderPlan()});
+
+/* ---------- Respaldo ---------- */
+$('copyBk').addEventListener('click',()=>{
+  const txt=JSON.stringify(S);
+  const fb=()=>{$('bkText').value=txt;$('bkText').select();$('bkMsg').textContent='Selecciona y copia el texto de abajo'};
+  try{navigator.clipboard.writeText(txt).then(()=>flash($('bkMsg'),'Respaldo copiado'),fb)}catch(e){fb()}
+});
+$('dlBk').addEventListener('click',()=>{
+  try{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(S)],{type:'application/json'}));a.download='mi-animo-respaldo-'+TODAY+'.json';document.body.appendChild(a);a.click();a.remove();flash($('bkMsg'),'Si no se descargó, usa "Copiar respaldo"')}catch(e){flash($('bkMsg'),'No se pudo descargar aquí. Usa "Copiar respaldo".')}
+});
+$('bkFile').addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{$('bkText').value=r.result;askRestore()};r.readAsText(f)});
+function restoreBtn(){const b=document.createElement('button');b.className='btn small ghost';b.textContent='Restaurar';b.addEventListener('click',askRestore);return b}
+function askRestore(){
+  let d;try{d=JSON.parse($('bkText').value)}catch(e){d=null}
+  const r=$('restoreRow');
+  if(!d||!d.activities||!d.entries){flash($('bkMsg'),'Ese texto no parece un respaldo de Mi Ánimo');return}
+  r.innerHTML='<span class="small">Esto reemplaza tus datos actuales.</span>';
+  const y=document.createElement('button');y.className='btn small';y.textContent='Sí, restaurar';
+  const n=document.createElement('button');n.className='btn small ghost';n.textContent='Cancelar';
+  y.onclick=()=>{S=d;migrate();save();$('bkText').value='';flash($('bkMsg'),'Datos restaurados');renderPlan();r.innerHTML='';r.appendChild(restoreBtn())};
+  n.onclick=()=>{r.innerHTML='';r.appendChild(restoreBtn())};r.append(y,n);
+}
+$('restoreBk').addEventListener('click',askRestore);
+
+save();
+let startTab='hoy';try{const t=localStorage.getItem(KEY+'.tab');if(t&&views[t])startTab=t}catch(e){}
+go(startTab);
+})();
+</script>
+
+<script>
+if('serviceWorker' in navigator){window.addEventListener('load',()=>{navigator.serviceWorker.register('sw.js').catch(()=>{})})}
+</script>
 </body>
 </html>

@@ -1,6 +1,6 @@
 // Service worker: guarda la app para que funcione sin internet y manda el recordatorio diario.
 // Al cambiar cualquier archivo, sube VERSION para que el teléfono descargue lo nuevo.
-const VERSION = 'mi-animo-v1';
+const VERSION = 'mi-animo-v2';
 const CACHE_AJUSTES = 'mi-animo-ajustes'; // ajustes del recordatorio (los escribe app.js)
 const ARCHIVOS = [
   './', './index.html', './styles.css', './app.js', './manifest.json',
